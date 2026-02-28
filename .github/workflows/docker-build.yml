@@ -33,5 +33,4 @@ jobs:
           file: ./docker/Dockerfile
           push: true
           tags: |
-            brianveldman/zerotrustassessment:latest
             brianveldman/zerotrustassessment:${{ github.sha }}
