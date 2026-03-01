@@ -1,10 +1,11 @@
 name: Build and push Docker image
 
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
+    inputs:
+      version:
+        description: "Docker image version"
+        required: true
 
 jobs:
   docker:
@@ -33,4 +34,4 @@ jobs:
           file: ./docker/Dockerfile
           push: true
           tags: |
-            brianveldman/zerotrustassessment:${{ github.sha }}
+            brianveldman/zerotrustassessment:${{ github.event.inputs.version }}
