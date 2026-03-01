@@ -1,16 +1,15 @@
-FROM mcr.microsoft.com/powershell
+FROM mcr.microsoft.com/powershell:lts-windowsservercore-ltsc2022
 
-SHELL ["pwsh","-Command"]
+SHELL ["pwsh", "-NoLogo", "-NoProfile", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
 
-RUN Invoke-WebRequest https://aka.ms/vs/17/release/vc_redist.x64.exe -OutFile vc_redist.x64.exe; `
-    Start-Process .\vc_redist.x64.exe -ArgumentList '/install','/quiet','/norestart' -Wait; `
-    Remove-Item .\vc_redist.x64.exe
+RUN [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; \
+    Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
 
-RUN New-Item /ztAssessment -ItemType Directory
+RUN New-Item -Path C:\ztAssessment -ItemType Directory -Force
 
-WORKDIR "/ztAssessment"
+WORKDIR C:\ztAssessment
 
-RUN Install-Module Az.Accounts -Force
-RUN Install-Module Az.Websites -Force
-RUN Install-Module Microsoft.Graph.Authentication -Force
-RUN Install-Module ZeroTrustAssessment -Force
+RUN Install-Module Az.Accounts -Repository PSGallery -Scope AllUsers -Force -AllowClobber
+RUN Install-Module Az.Websites -Repository PSGallery -Scope AllUsers -Force -AllowClobber
+RUN Install-Module Microsoft.Graph.Authentication -Repository PSGallery -Scope AllUsers -Force -AllowClobber
+RUN Install-Module ZeroTrustAssessment -Repository PSGallery -Scope AllUsers -Force -AllowClobber
